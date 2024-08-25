@@ -17,5 +17,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 
 ## Acknowledgments
--This project uses Bootstrap for styling and layout.
--Thanks to the creators of pako, WASM, and D3.js for their libraries and contributions.
+This project uses Bootstrap for styling and layout.  
+Thanks to the creators of pako, WASM, and D3.js for their libraries and contributions.
