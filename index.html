@@ -1,0 +1,1028 @@
+<!-- <html>
+  <head>
+    <meta charset="utf-8"/>
+    <script src="pako_inflate.min.js"></script>
+    <script src="wasm_exec.js"></script>
+    <script src="viz.js"></script>
+    <script src="main.js"></script>
+    <title>B+ Tree Visualization</title>
+  </head>
+  <body>
+    <div id="container">
+      <div id="header">
+        <h1>B+ Tree Visualization</h1>
+       
+        <a class="github-button" href="https://github.com/vismaywalde/B-plus-tree" data-size="large">GitHub </a>
+        <hr/>
+      </div>
+      <div id="content-loading">
+        <h3>Loading...</h3>
+      </div>
+      <div id="content" hidden="hidden">
+        <p>
+          <b>maximum degree:</b>
+          <input name="maxDegree" value="4" type="radio">4</input>
+          <input name="maxDegree" value="5" type="radio">5</input>
+          <input name="maxDegree" value="6" type="radio">6</input>
+          <input name="maxDegree" value="7" type="radio">7</input>
+          <input name="maxDegree" value="8" type="radio">8</input>
+          <input name="maxDegree" value="9" type="radio">9</input>
+          <input name="maxDegree" value="10" type="radio">10</input>
+        </p>
+        <p>
+          <b>key:</b>
+          <input name="key" value="1" type="number"></input>
+          <input name="random-new-key" type="checkbox" checked="checked">random new key</input>
+        </p>
+        <p>
+          <button id="add-key"><b>✚ Add key</b></button>
+          <button id="delete-key"><b>✖ Delete key</b></button>
+          <button id="undo"><b>◀ Undo</b></button>
+          <button id="redo"><b>▶ Redo</b></button>
+          <button id="reset"><b>↩ Reset</b></button>
+        </p>
+        <p id="tips" style="color:red;"></p>
+        <div id="svg"></div>
+      </div>
+    </div>
+
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
+</html> -->
+
+<!-- 
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="pako_inflate.min.js"></script>
+    <script src="wasm_exec.js"></script>
+    <script src="viz.js"></script>
+    <script src="main.js"></script>
+    <title>B+ Tree Visualization</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f0f4f8;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+
+      #container {
+        width: 60%;
+        margin: auto;
+        padding: 20px;
+        background-color: #ffffff;
+        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        margin-top: 50px;
+      }
+
+      #header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        font-size: 2.5em;
+        margin: 0;
+        color: #007acc;
+      }
+
+      hr {
+        border: none;
+        height: 2px;
+        background-color: #007acc;
+        margin: 20px 0;
+      }
+
+      #content-loading {
+        text-align: center;
+      }
+
+      #content {
+        text-align: center;
+      }
+
+      p {
+        margin: 15px 0;
+        font-size: 1.2em;
+      }
+
+      input[type="radio"],
+      input[type="number"] {
+        margin-left: 10px;
+        font-size: 1em;
+      }
+
+      input[type="checkbox"] {
+        margin-left: 10px;
+        transform: scale(1.5);
+      }
+
+      button {
+        background-color: #007acc;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1em;
+        cursor: pointer;
+        border-radius: 5px;
+        margin: 5px;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #005fa3;
+      }
+
+      #tips {
+        font-style: italic;
+      }
+
+      #svg {
+        margin-top: 20px;
+        min-height: 300px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+
+      .github-button {
+        background-color: #333;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 1em;
+        transition: background-color 0.3s;
+      }
+
+      .github-button:hover {
+        background-color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="header">
+        <h1>B+ Tree Visualization</h1>
+ 
+        <a
+          class="github-button"
+          href="https://github.com/vismaywalde/B-plus-tree"
+          data-size="large"
+          >GitHub</a
+        >
+        <hr />
+      </div>
+      <div id="content-loading">
+        <h3>Loading...</h3>
+      </div>
+      <div id="content" hidden="hidden">
+        <p>
+          <b>Maximum Degree:</b>
+          <input name="maxDegree" value="4" type="radio" />4
+          <input name="maxDegree" value="5" type="radio" />5
+          <input name="maxDegree" value="6" type="radio" />6
+          <input name="maxDegree" value="7" type="radio" />7
+          <input name="maxDegree" value="8" type="radio" />8
+          <input name="maxDegree" value="9" type="radio" />9
+          <input name="maxDegree" value="10" type="radio" />10
+        </p>
+        <p>
+          <b>Key:</b>
+          <input name="key" value="1" type="number" />
+          <input
+            name="random-new-key"
+            type="checkbox"
+            checked="checked"
+          />random new key
+        </p>
+        <p>
+          <button id="add-key"><b>✚ Add key</b></button>
+          <button id="delete-key"><b>✖ Delete key</b></button>
+          <button id="undo"><b>◀ Undo</b></button>
+          <button id="redo"><b>▶ Redo</b></button>
+          <button id="reset"><b>↩ Reset</b></button>
+        </p>
+        <p id="tips" style="color: red;"></p>
+        <div id="svg"></div>
+      </div>
+    </div>
+
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
+</html> -->
+
+
+<!-- 
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="pako_inflate.min.js"></script>
+    <script src="wasm_exec.js"></script>
+    <script src="viz.js"></script>
+    <script src="main.js"></script>
+    <title>B+ Tree Visualization</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+
+      #container {
+        width: 70%;
+        margin: auto;
+        padding: 20px;
+        background-color: #ffffff;
+        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        margin-top: 50px;
+      }
+
+      #header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        font-size: 2.5em;
+        color: #007bff;
+      }
+
+      #svg {
+        min-height: 300px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+
+      .github-button {
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container" class="container">
+      <div id="header">
+        <h1 class="display-4">B+ Tree Visualization</h1>
+        <a
+          class="btn btn-dark github-button"
+          href="https://github.com/vismaywalde/B-plus-tree"
+          data-size="large"
+          >View on GitHub</a
+        >
+        <hr />
+      </div>
+      <div id="content-loading" class="text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <h3>Loading...</h3>
+      </div>
+      <div id="content" hidden="hidden" class="text-center">
+        <div class="row mb-3">
+          <label class="col-sm-4 col-form-label"><b>Maximum Degree:</b></label>
+          <div class="col-sm-8">
+            <div class="btn-group" role="group">
+              <input
+                name="maxDegree"
+                value="4"
+                type="radio"
+                class="btn-check"
+                id="maxDegree4"
+                checked
+              />
+              <label class="btn btn-outline-primary" for="maxDegree4">4</label>
+
+              <input
+                name="maxDegree"
+                value="5"
+                type="radio"
+                class="btn-check"
+                id="maxDegree5"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree5">5</label>
+
+              <input
+                name="maxDegree"
+                value="6"
+                type="radio"
+                class="btn-check"
+                id="maxDegree6"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree6">6</label>
+
+              <input
+                name="maxDegree"
+                value="7"
+                type="radio"
+                class="btn-check"
+                id="maxDegree7"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree7">7</label>
+
+              <input
+                name="maxDegree"
+                value="8"
+                type="radio"
+                class="btn-check"
+                id="maxDegree8"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree8">8</label>
+
+              <input
+                name="maxDegree"
+                value="9"
+                type="radio"
+                class="btn-check"
+                id="maxDegree9"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree9">9</label>
+
+              <input
+                name="maxDegree"
+                value="10"
+                type="radio"
+                class="btn-check"
+                id="maxDegree10"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree10">10</label>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <label class="col-sm-4 col-form-label"><b>Key:</b></label>
+          <div class="col-sm-8">
+            <input
+              name="key"
+              value="1"
+              type="number"
+              class="form-control w-50 d-inline"
+            />
+            <div class="form-check d-inline ms-3">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                name="random-new-key"
+                id="randomNewKey"
+                checked
+              />
+              <label class="form-check-label" for="randomNewKey">
+                Random new key
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col">
+            <button id="add-key" class="btn btn-success btn-lg me-2">
+              ✚ Add key
+            </button>
+            <button id="delete-key" class="btn btn-danger btn-lg me-2">
+              ✖ Delete key
+            </button>
+            <button id="undo" class="btn btn-warning btn-lg me-2">
+              ◀ Undo
+            </button>
+            <button id="redo" class="btn btn-warning btn-lg me-2">
+              ▶ Redo
+            </button>
+            <button id="reset" class="btn btn-secondary btn-lg">
+              ↩ Reset
+            </button>
+          </div>
+        </div>
+        <p id="tips" class="text-danger"></p>
+        <div id="svg" class="border p-3 bg-light"></div>
+      </div>
+    </div>
+
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    ></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
+</html> -->
+
+<!-- 
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="pako_inflate.min.js"></script>
+    <script src="wasm_exec.js"></script>
+    <script src="viz.js"></script>
+    <script src="main.js"></script>
+    <title>B+ Tree Visualization</title>
+    
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+
+      #container {
+        width: 70%;
+        margin: auto;
+        padding: 20px;
+        background-color: #ffffff;
+        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        margin-top: 50px;
+      }
+
+      #header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        font-size: 2.5em;
+        color: #007bff;
+      }
+
+      #svg {
+        min-height: 300px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+
+      .github-button {
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container" class="container">
+      <div id="header">
+        <h1 class="display-4">B+ Tree Visualization</h1>
+        <a
+          class="btn btn-dark github-button"
+          href="https://github.com/vismaywalde/B-plus-tree"
+          data-size="large"
+          >View on GitHub</a
+        >
+        <hr />
+      </div>
+      <div id="content-loading" class="text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <h3>Loading...</h3>
+      </div>
+      <div id="content" hidden="hidden" class="text-center">
+        <div class="row mb-3 align-items-center">
+          <label class="col-sm-4 col-form-label"><b>Maximum Degree:</b></label>
+          <div class="col-sm-8">
+            <div class="btn-group" role="group">
+              <input
+                name="maxDegree"
+                value="4"
+                type="radio"
+                class="btn-check"
+                id="maxDegree4"
+                checked
+              />
+              <label class="btn btn-outline-primary" for="maxDegree4">4</label>
+
+              <input
+                name="maxDegree"
+                value="5"
+                type="radio"
+                class="btn-check"
+                id="maxDegree5"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree5">5</label>
+
+              <input
+                name="maxDegree"
+                value="6"
+                type="radio"
+                class="btn-check"
+                id="maxDegree6"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree6">6</label>
+
+              <input
+                name="maxDegree"
+                value="7"
+                type="radio"
+                class="btn-check"
+                id="maxDegree7"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree7">7</label>
+
+              <input
+                name="maxDegree"
+                value="8"
+                type="radio"
+                class="btn-check"
+                id="maxDegree8"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree8">8</label>
+
+              <input
+                name="maxDegree"
+                value="9"
+                type="radio"
+                class="btn-check"
+                id="maxDegree9"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree9">9</label>
+
+              <input
+                name="maxDegree"
+                value="10"
+                type="radio"
+                class="btn-check"
+                id="maxDegree10"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree10">10</label>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3 align-items-center">
+          <label class="col-sm-4 col-form-label"><b>Key:</b></label>
+          <div class="col-sm-4">
+            <input
+              name="key"
+              value="1"
+              type="number"
+              class="form-control"
+            />
+          </div>
+          <div class="col-sm-4 text-start">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                name="random-new-key"
+                id="randomNewKey"
+                checked
+              />
+              <label class="form-check-label" for="randomNewKey">
+                Random new key
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col">
+            <button id="add-key" class="btn btn-success btn-lg me-2">
+              ✚ Add key
+            </button>
+            <button id="delete-key" class="btn btn-danger btn-lg me-2">
+              ✖ Delete key
+            </button>
+            <button id="undo" class="btn btn-warning btn-lg me-2">
+              ◀ Undo
+            </button>
+            <button id="redo" class="btn btn-warning btn-lg me-2">
+              ▶ Redo
+            </button>
+            <button id="reset" class="btn btn-secondary btn-lg">
+              ↩ Reset
+            </button>
+          </div>
+        </div>
+        <p id="tips" class="text-danger"></p>
+        <div id="svg" class="border p-3 bg-light"></div>
+      </div>
+    </div>
+
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    ></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
+</html> -->
+
+<!-- 
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="pako_inflate.min.js"></script>
+    <script src="wasm_exec.js"></script>
+    <script src="viz.js"></script>
+    <script src="main.js"></script>
+    <title>B+ Tree Visualization</title>
+ 
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #container {
+        flex: 1;
+        padding: 20px;
+        background-color: #ffffff;
+        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        margin: 20px;
+      }
+
+      #header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        font-size: 2.5em;
+        color: #007bff;
+      }
+
+      #svg {
+        flex: 1;
+        min-height: 70vh;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+        margin-top: 20px;
+      }
+
+      .github-button {
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container" class="container-fluid">
+      <div id="header">
+        <h1 class="display-4">B+ Tree Visualization</h1>
+        <a
+          class="btn btn-dark github-button"
+          href="https://github.com/vismaywalde/B-plus-tree"
+          data-size="large"
+          >View on GitHub</a
+        >
+        <hr />
+      </div>
+      <div id="content-loading" class="text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <h3>Loading...</h3>
+      </div>
+      <div id="content" hidden="hidden">
+        <div class="row mb-3 align-items-center">
+          <label class="col-sm-4 col-md-2 col-form-label"><b>Maximum Degree:</b></label>
+          <div class="col-sm-8 col-md-10">
+            <div class="btn-group" role="group">
+              <input
+                name="maxDegree"
+                value="4"
+                type="radio"
+                class="btn-check"
+                id="maxDegree4"
+                checked
+              />
+              <label class="btn btn-outline-primary" for="maxDegree4">4</label>
+
+              <input
+                name="maxDegree"
+                value="5"
+                type="radio"
+                class="btn-check"
+                id="maxDegree5"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree5">5</label>
+
+              <input
+                name="maxDegree"
+                value="6"
+                type="radio"
+                class="btn-check"
+                id="maxDegree6"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree6">6</label>
+
+              <input
+                name="maxDegree"
+                value="7"
+                type="radio"
+                class="btn-check"
+                id="maxDegree7"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree7">7</label>
+
+              <input
+                name="maxDegree"
+                value="8"
+                type="radio"
+                class="btn-check"
+                id="maxDegree8"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree8">8</label>
+
+              <input
+                name="maxDegree"
+                value="9"
+                type="radio"
+                class="btn-check"
+                id="maxDegree9"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree9">9</label>
+
+              <input
+                name="maxDegree"
+                value="10"
+                type="radio"
+                class="btn-check"
+                id="maxDegree10"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree10">10</label>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3 align-items-center">
+          <label class="col-sm-4 col-md-2 col-form-label"><b>Key:</b></label>
+          <div class="col-sm-4 col-md-3">
+            <input
+              name="key"
+              value="1"
+              type="number"
+              class="form-control"
+            />
+          </div>
+          <div class="col-sm-4 col-md-7 text-start">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                name="random-new-key"
+                id="randomNewKey"
+                checked
+              />
+              <label class="form-check-label" for="randomNewKey">
+                Random new key
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col">
+            <button id="add-key" class="btn btn-success btn-lg me-2">
+              ✚ Add key
+            </button>
+            <button id="delete-key" class="btn btn-danger btn-lg me-2">
+              ✖ Delete key
+            </button>
+            <button id="undo" class="btn btn-warning btn-lg me-2">
+              ◀ Undo
+            </button>
+            <button id="redo" class="btn btn-warning btn-lg me-2">
+              ▶ Redo
+            </button>
+            <button id="reset" class="btn btn-secondary btn-lg">
+              ↩ Reset
+            </button>
+          </div>
+        </div>
+        <p id="tips" class="text-danger"></p>
+        <div id="svg" class="border p-3"></div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    ></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
+</html> -->
+
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="pako_inflate.min.js"></script>
+    <script src="wasm_exec.js"></script>
+    <script src="viz.js"></script>
+    <script src="main.js"></script>
+    <title>B+ Tree Visualization</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #container {
+        flex: 1;
+        padding: 20px;
+        background-color: #ffffff;
+        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        margin: 20px;
+      }
+
+      #header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        font-size: 2.5em;
+        color: #007bff;
+      }
+
+      h2 {
+        font-size: 1.75em;
+        color: #6c757d;
+        margin-top: -10px;
+      }
+
+      #svg {
+        flex: 1;
+        min-height: 70vh;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+        margin-top: 20px;
+      }
+
+      .github-button {
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container" class="container-fluid">
+      <div id="header">
+        <h1 class="display-4">B+ Tree Visualization</h1>
+        <h2>Data Structure (CS201) Project</h2>
+        <a
+          class="btn btn-dark github-button"
+          href="https://github.com/vismaywalde/B-plus-tree"
+          data-size="large"
+          >View on GitHub</a
+        >
+        <hr />
+      </div>
+      <div id="content-loading" class="text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <h3>Loading...</h3>
+      </div>
+      <div id="content" hidden="hidden">
+        <div class="row mb-3 align-items-center">
+          <label class="col-sm-4 col-md-2 col-form-label"><b>Maximum Degree:</b></label>
+          <div class="col-sm-8 col-md-10">
+            <div class="btn-group" role="group">
+              <input
+                name="maxDegree"
+                value="4"
+                type="radio"
+                class="btn-check"
+                id="maxDegree4"
+                checked
+              />
+              <label class="btn btn-outline-primary" for="maxDegree4">4</label>
+
+              <input
+                name="maxDegree"
+                value="5"
+                type="radio"
+                class="btn-check"
+                id="maxDegree5"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree5">5</label>
+
+              <input
+                name="maxDegree"
+                value="6"
+                type="radio"
+                class="btn-check"
+                id="maxDegree6"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree6">6</label>
+
+              <input
+                name="maxDegree"
+                value="7"
+                type="radio"
+                class="btn-check"
+                id="maxDegree7"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree7">7</label>
+
+              <input
+                name="maxDegree"
+                value="8"
+                type="radio"
+                class="btn-check"
+                id="maxDegree8"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree8">8</label>
+
+              <input
+                name="maxDegree"
+                value="9"
+                type="radio"
+                class="btn-check"
+                id="maxDegree9"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree9">9</label>
+
+              <input
+                name="maxDegree"
+                value="10"
+                type="radio"
+                class="btn-check"
+                id="maxDegree10"
+              />
+              <label class="btn btn-outline-primary" for="maxDegree10">10</label>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3 align-items-center">
+          <label class="col-sm-4 col-md-2 col-form-label"><b>Key:</b></label>
+          <div class="col-sm-4 col-md-3">
+            <input
+              name="key"
+              value="1"
+              type="number"
+              class="form-control"
+            />
+          </div>
+          <div class="col-sm-4 col-md-7 text-start">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                name="random-new-key"
+                id="randomNewKey"
+                checked
+              />
+              <label class="form-check-label" for="randomNewKey">
+                Random new key
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col">
+            <button id="add-key" class="btn btn-success btn-lg me-2">
+              ✚ Add key
+            </button>
+            <button id="delete-key" class="btn btn-danger btn-lg me-2">
+              ✖ Delete key
+            </button>
+            <button id="undo" class="btn btn-warning btn-lg me-2">
+              ◀ Undo
+            </button>
+            <button id="redo" class="btn btn-warning btn-lg me-2">
+              ▶ Redo
+            </button>
+            <button id="reset" class="btn btn-secondary btn-lg">
+              ↩ Reset
+            </button>
+          </div>
+        </div>
+        <p id="tips" class="text-danger"></p>
+        <div id="svg" class="border p-3"></div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    ></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
+</html>
