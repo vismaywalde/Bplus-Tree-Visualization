@@ -12,9 +12,6 @@ B+ Tree Visualization is an interactive tool for visualizing B+ trees. The appli
 - **Random Key Generation**: Option to generate random keys for insertion.
 
 
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 
 ## Acknowledgments
 This project uses Bootstrap for styling and layout.  
